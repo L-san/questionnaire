@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Создание анкеты</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+            integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+            crossorigin="anonymous"></script>
+    <script th:inline="javascript">
+        let counter = 0;
+
+        function countr() {
+            counter++;
+            return counter;
+        }
+
+        function addSelect() {
+            var T = document.getElementById('xTable');
+
+            var R = document.querySelectorAll('tbody .row')[0];
+            var Rcp = R.cloneNode(true);
+            Rcp.getElementsByClassName('chb')[0].value = countr();
+            var C = Rcp.cloneNode(true);
+            T.appendChild(C);
+        }
+
+
+        function checkSelect() {
+            checked = $("input[type=checkbox]:checked").length;
+            if (checked === 0) {
+                alert("Вы должны выбрать правильным хотя бы один вариант ответа");
+                return false;
+            }
+        }
+    </script>
+    <style>
+        table {
+            left: 15%;
+            top: 50%;
+            width: 50%;
+            text-align: left;
+        }
+
+        input[checked] {
+            outline: 1px solid blue;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <span class="navbar-brand mb-0 h1">Тест-анкеты</span>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/questionnaire/all}">Анкеты </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/users/all}">Все пользователи</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/manage/create}">Добавить новую анкету</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/logout}">Выйти</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<form action="#" method="post" th:action="@{/manage/create}" th:object="${formDTO}" onsubmit="return checkSelect()">
+    <table align="center" id="xTable">
+
+        <thead>
+        <tr><br><br></tr>
+        <tr th:if="${#strings.isEmpty(formDTO.questionnaireTheme)}" style="border-bottom:1px solid black">
+            <td>
+                <input type="text" id="questionnaireTheme" name="questionnaireTheme" class="form-control"
+                       th:value="${formDTO.questionnaireTheme}"
+                       placeholder="Название анкеты" required/>
+            </td>
+        </tr>
+        <tr th:if="${not #strings.isEmpty(formDTO.questionnaireTheme)}" style="border-bottom:1px solid black">
+            <td>
+                <h5 th:text="${formDTO.questionnaireTheme}"></h5>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <br>
+            </td>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr>
+            <td>
+                <input type="text" id="value" name="value" class="form-control" th:value="${formDTO.value}"
+                       placeholder="Вопрос" required/>
+            </td>
+        </tr>
+        <tr>
+            <td><br></td>
+        </tr>
+        <tr class="row">
+            <td>
+                <input type="checkbox"
+                       id="0"
+                       class="chb"
+                       th:field="*{chosenAnswers}"
+                       value = "0">
+                <input type="text"
+                       th:field="*{answers}"
+                       th:value="${formDTO.value}"
+                       placeholder="Ответ" required/>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <table align="center">
+        <thead>
+        <th><br></th>
+        </thead>
+        <tbody>
+        <div>
+            <tr>
+                <td>
+                    <button type="button" onclick="addSelect();" class="btn btn-primary btn-block">Добавить вариант
+                        ответа
+                    </button>
+                <td>
+                    <button type="submit" class="btn btn-success btn-block">Добавить вопрос</button>
+                </td>
+            </tr>
+        </div>
+        </tbody>
+    </table>
+    <table align="center">
+        <thead>
+        <th><br></th>
+        </thead>
+        <tbody>
+        <tr th:if=" ${#lists.isEmpty(questionnaireDTO.questions)}">
+            <td>Пока что здесь нет вопросов.<br></td>
+        </tr>
+
+        <div th:each="question : ${questionnaireDTO.questions}">
+            <tr style="border-top:1px solid black">
+                <td align="left"><h5 th:text="${question.value}"></h5></td>
+            </tr>
+
+            <div align="left" th:each="answer, iter : ${question.answers}">
+                <tr>
+                    <td>
+                        <div>
+                            <input type="radio"
+                                   th:checked="${answer.isRight}"
+                                   disabled>
+                            <label th:text="${answer.answer}"></label>
+                        </div>
+                    </td>
+                </tr>
+            </div>
+        </div>
+        </tbody>
+    </table>
+</form>
+</body>
+</html>

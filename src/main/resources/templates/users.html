@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Пользователи</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        table {
+            left: 15%;
+            top: 50%;
+            width: 50%;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <span class="navbar-brand mb-0 h1">Тест-анкеты</span>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ms-auto">
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/questionnaire/all}">Анкеты </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/users/all}">Все пользователи</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/manage/create}">Добавить новую анкету</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/logout}">Выйти</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<table align="center">
+    <thead>
+    <tr style="border-bottom:1px solid black">
+        <br>
+        <th><h3>Пользователь</h3></th>
+        <th><h4>Статистика</h4></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${#lists.isEmpty(userList)}">
+        <td align="center">Пока что здесь пользователей :(</td>
+    </tr>
+    <tr th:each = "user : ${userList}" style="border-bottom:1px solid black">
+        <form action="#" method="GET" th:action="@{/users/view}" th:object="${chosenUser}">
+            <td th:text="${user.username}"></td>
+            <td><input type="hidden" th:value="${user.username}" name = "username" align="left"/><button type="submit" class="btn btn-primary btn-block"> >> </button></td>
+        </form>
+    </tr>
+    </tbody>
+    <tfoot>
+    </tfoot>
+</table>
+
+
+</body>
+</html>
